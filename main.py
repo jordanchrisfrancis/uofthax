@@ -1,5 +1,6 @@
 # Example file showing a circle moving on screen
 import pygame
+import dilute
 
 # pygame setup
 pygame.init()
@@ -17,10 +18,8 @@ clock = pygame.time.Clock()
 running = True
 bg = pygame.image.load("background.jpg")
 pygame.font.init()
-print(pygame.font.get_fonts())
 my_font = pygame.font.SysFont('oldenglishtext', 30)
 
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 icon_1 = pygame.Vector2(335, 130)
 icon_2 = pygame.Vector2(834, 167)
 icon_3 = pygame.Vector2(465, 62)
@@ -38,14 +37,22 @@ text_surface_2 = my_font.render('Stage 2: Ferment', False, (0,0,0), (255,255,255
 text_surface_3 = my_font.render('Stage 3: Dilute', False, (0,0,0), (255,255,255))
 text_surface_4 = my_font.render('Stage 4: Bottle', False, (0,0,0), (255,255,255))
 
+<<<<<<< HEAD
 >>>>>>> aa6e90d (main-menu)
 
+=======
+>>>>>>> c984c89 (Added Dilution)
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONUP:
+            pos = pygame.mouse.get_pos()
+
+            if rec1.collidepoint(pos):
+                dilute.dilute(screen, clock)
 
 <<<<<<< HEAD
     # fill the screen with a color to wipe away anything from last frame
