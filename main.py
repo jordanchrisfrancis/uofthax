@@ -1,6 +1,7 @@
 # Example file showing a circle moving on screen
 import pygame
 import dilute
+import mixing
 
 # pygame setup
 pygame.init()
@@ -38,7 +39,15 @@ while running:
             pos = pygame.mouse.get_pos()
 
             if rec1.collidepoint(pos):
+                mixing.mixing(screen, clock)
+            elif rec2.collidepoint(pos):
+                # fermenting
+                print()
+            elif rec3.collidepoint(pos):
                 dilute.dilute(screen, clock)
+            elif rec4.collidepoint(pos):
+                # bottling
+                print()
 
     # flip() the display to put your work on screen
     pygame.display.flip()

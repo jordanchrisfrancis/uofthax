@@ -14,17 +14,11 @@ from pygame.locals import (
     MOUSEBUTTONDOWN,
 )
 
-pygame.init()
-
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT =  600
-
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
 pygame.font.init()
 my_font = pygame.font.SysFont('oldenglishtext', 30)
 
-
+pygame.init()
+screen = pygame.display.set_mode((800,600))
 
 class Pestle(pygame.sprite.Sprite):
     """
@@ -40,7 +34,7 @@ class Pestle(pygame.sprite.Sprite):
         self.surf = pygame.transform.scale(pygame.transform.rotate(pygame.image.load("Pestle2.png").convert(),35), (300,300))
         self.rect = self.surf.get_rect()
         self.surf.set_colorkey("black", RLEACCEL)
-        self.rect = self.surf.get_rect(center = (200,200))
+        self.rect = self.surf.get_rect(center = (200,300))
 
         # Sets the collision surface of the pestle
         self.collision_rect = self.rect.copy()
@@ -94,9 +88,9 @@ class Bowl(pygame.sprite.Sprite):
     """
 
     def __init__(self):
-        self.surf = pygame.transform.scale(pygame.image.load("mortar.png").convert(), (150,150))
+        self.surf = pygame.transform.scale(pygame.image.load("mortar.png").convert(), (200,200))
         self.surf.set_colorkey("black", RLEACCEL)
-        self.rect = self.surf.get_rect(center = (500,500))
+        self.rect = self.surf.get_rect(center = (400,400))
 
         # set the inside rect where there are no collisions
         self.collision_rect_left = self.rect.copy()
@@ -116,6 +110,7 @@ class Barley(pygame.sprite.Sprite):
     surf = pygame.transform.rotate(pygame.transform.scale(pygame.image.load("barley.png").convert(), (25,40)), 90)
     def __init__(self, pos = (450,20)):
         self.rect = self.surf.get_rect(center = pos)
+        self.surf.set_colorkey("black")
 
     def update(self, collision_funcs):
         temp = self.rect.copy()
@@ -151,23 +146,52 @@ class Barley(pygame.sprite.Sprite):
         return self.rect.colliderect(rect)
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, text):
+    def __init__(self, text, pos):
         self.text = text
         self.surf = my_font.render(text, True, (0,0,0), (255,255,255))
+        self.rect = self.surf.get_rect()
+        self.pos = pos
+
+class Label(pygame.sprite.Sprite):
+    def __init__(self, text, pos):
+        self.text = text
+        self.surf = my_font.render(text, True, (0,0,0), (255,255,255))
+        self.rect = self.surf.get_rect()
+        self.pos = pos
 
         
+def barley_pos(click):
+    if click % 2 == 0:
+        return (375,20)
+    else:
+        return (425,20)
 
-# Define the important items
-clock = pygame.time.Clock()
-pestle = Pestle()
-bowl = Bowl()
-barleys = [Barley()]
-barleys_collision= [barleys[0].is_rect_colliding]
-button = Button("Submit")
+def score(barleys):
+    score = 0
+    for barley in barleys:
+        if 15 > barley.hits >10:
+            score += 3
+        elif 10 > barley.hits > 5:
+            score += 2
+        elif barley.hits > 15:
+            score += 1
+    if score > 25:
+        return 25
+    else:
+        return score
 
+def mixing(screen, clock):
+    # Define the important items
+    pestle = Pestle()
+    bowl = Bowl()
+    barleys = []
+    barleys_collision= []
+    submit = Button("Submit", (600, 500))
+    label = Label("Click to add more barley seeds.", (50, 50))
+    label2 = Label("Crush barley seeds with pestle correctly to get more points.", (50, 100))
 
+    click = 0
 
-def loop():
     running = True
     while running:
         for event in pygame.event.get():
@@ -177,10 +201,14 @@ def loop():
                 if event.key == K_ESCAPE:
                     running = False
             elif event.type == MOUSEBUTTONDOWN:
+                click += 1
+                if submit.rect.collidepoint(event.pos):
+                    return score(barleys)
                 pestle.held(event.pos)
-                temp = Barley((520,20))
-                barleys.append(temp)
-                barleys_collision.append(temp.is_rect_colliding)
+                if not pestle.is_held:
+                    temp = Barley(barley_pos(click))
+                    barleys.append(temp)
+                    barleys_collision.append(temp.is_rect_colliding)
             elif event.type == MOUSEBUTTONUP:
                 pestle.not_held()
             elif event.type == MOUSEMOTION:
@@ -190,28 +218,32 @@ def loop():
 
 
     
-        screen.fill((255,0,0))
+        screen.fill((197, 102, 72))
+        pygame.draw.rect(screen, "dark Gray", pygame.Rect(0,400, 800,800))
+
+        submit.rect = screen.blit(submit.surf, submit.pos)
+        screen.blit(label.surf, label.pos)
+        screen.blit(label2.surf, label2.pos)
+        
 
         screen.blit(pestle.surf, pestle.rect)
         screen.blit(bowl.surf, bowl.rect)
 
-        pygame.draw.rect(screen, "green", pygame.Rect(pestle.collision_rect), 2)
-        pygame.draw.rect(screen, "BLUE", pygame.Rect(bowl.collision_rect_left), 2)
-        pygame.draw.rect(screen, "BLUE", pygame.Rect(bowl.collision_rect_right), 2)
-        pygame.draw.rect(screen, "BLUE", pygame.Rect(bowl.collision_rect_bot), 2)
-        pygame.draw.rect(screen, "green", pygame.Rect(bowl.rect), 2)
+        # pygame.draw.rect(screen, "green", pygame.Rect(pestle.collision_rect), 2)
+        # pygame.draw.rect(screen, "BLUE", pygame.Rect(bowl.collision_rect_left), 2)
+        # pygame.draw.rect(screen, "BLUE", pygame.Rect(bowl.collision_rect_right), 2)
+        # pygame.draw.rect(screen, "BLUE", pygame.Rect(bowl.collision_rect_bot), 2)
+        # pygame.draw.rect(screen, "green", pygame.Rect(bowl.rect), 2)
 
         for i in range(0, len(barleys)):
             barleys[i].update([bowl.is_rect_colliding] + barleys_collision[0:i] + barleys_collision[i+1:len(barleys)])
             screen.blit(barleys[i].surf, barleys[i].rect)
-            pygame.draw.rect(screen, "blue", pygame.Rect(barleys[i].rect), 2)
+            # pygame.draw.rect(screen, "blue", pygame.Rect(barleys[i].rect), 2)
 
         
-        screen.blit(button.surf, (600, 500))
 
 
         pygame.display.update()
         pygame.display.flip()
         clock.tick(120)
         
-loop()
