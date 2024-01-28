@@ -1,205 +1,128 @@
-try:
-    import sys
-    import random
-    import math
-    import os
-    import getopt
-    import pygame as pg
-    from pygame import Vector2
-    from socket import *
-    from pygame.locals import *
-except ImportError:
-    print(f"error loading module: {error}")
-    sys.exit(2)
+import pygame as pygame
+
+from pygame.locals import (
+    K_UP,
+    K_DOWN,
+    K_LEFT,
+    K_RIGHT,
+    K_ESCAPE,
+    KEYDOWN,
+    QUIT,
+    RLEACCEL,
+)
+
+pygame.init()
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Player, self).__init__()
+        self.surf = pygame.transform.scale(pygame.image.load("player.png").convert(), (100, 100))
+        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.rect = self.surf.get_rect()
     
-#initialize screen and global objects
-windowsize = Vector2(800, 600)
-windowcentre = windowsize // 2
+    def update(self, pressed_keys):
+        if pressed_keys[K_UP]:
+            self.rect.move_ip(0, -5)
+        if pressed_keys[K_DOWN]:
+            self.rect.move_ip(0, 5)
+        if pressed_keys[K_LEFT]:
+            self.rect.move_ip(-5, 0)
+        if pressed_keys[K_RIGHT]:
+            self.rect.move_ip(5, 0)
 
-screen = pg.display.set_mode((windowsize))
-screen_rect = screen.get_rect()
+class Clickable(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Clickable, self).__init__()
+        self.surf = pygame.Surface((50 * 2, 50 * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.surf, (0,255,0), (50, 50), 50, 100)
+        self.rect = self.surf.get_rect(center = (200,200))
 
-reference_dict = {}
+    def update(self, pressed_keys):
+        if pressed_keys[K_UP]:
+            self.rect.move_ip(0, -5)
+        if pressed_keys[K_DOWN]:
+            self.rect.move_ip(0, 5)
+        if pressed_keys[K_LEFT]:
+            self.rect.move_ip(-5, 0)
+        if pressed_keys[K_RIGHT]:
+            self.rect.move_ip(5, 0)
 
+    def change_color(self, color):
+        x = self.rect.x
+        y = self.rect.y
+        self.surf = pygame.Surface((50 * 2, 50 * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.surf, color, (50, 50), 50, 100)
+        self.rect = self.surf.get_rect(center = (x+50,y+50))
 
-objects = []
+    def bigger(self):
+        x = self.rect.x
+        y = self.rect.y
+        self.surf = pygame.transform.scale(self.surf, (200,200))
+        self.rect = self.surf.get_rect(center = (x+100, y+100))
 
+    def smaller(self):
+        x = self.rect.x
+        y = self.rect.y
+        self.surf = pygame.transform.scale(self.surf, (50,50))
+        self.rect = self.surf.get_rect(center = (x+25,y+25))
 
-rect1 = pg.Rect(0, 500, 800, 100)
-    
-
-
-def rotate_on_pivot(image, angle, pivot, origin):
-    
-    surf = pg.transform.rotate(image, angle)
-    offset = pivot + (origin - pivot).rotate(-angle)
-    rect = surf.get_rect(centre = offset)
-    
-    return surf, rect
-
-#redo class
-class Object:
-    def __init__(self, x, y, width, height, image):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.image = image
-        self.velocity = [0, 0]
-        
-        objects.append(self)
-        
-    def draw(self):
-        screen.blit(pg.transform.scale(self.image, (self.width, self.height)), (self.x, self.y))
-    def update(self):
-        self.x += self.velocity[0]
-        self.y += self.velocity[1]
-        self.draw()
-        
-        
-        
-class barreltop(pg.sprite.Sprite): 
-    is_held = False
-    past_pos = None
-    
-    def __init__(self, pivot):
-#        self.surf = pg.transform.scale(pg.image.load("data/barreltop.png").convert(), (200, 200))
-               
-        self.image_orig = pg.transform.scale(pg.image.load("data/barreltop.png").convert(), (200, 200))
-        self.image = self.image_orig
-        self.image.set_colorkey("black", RLEACCEL) 
-        self.rect = self.image.get_rect(center = pivot)
-        
+class Wall(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Wall, self).__init__()
+        self.surf = pygame.Surface((50,100))
+        self.surf.fill((0,0,0))
+        self.rect = self.surf.get_rect()
+        self.rect.x = 400
+        self.rect.y = 400
         
 
-    
-    def held(self, point):
-        if self.rect.collidepoint(point):
-            self.is_held = True
-            
-    def not_held(self):
-        self.is_held = False
-
-
-    
-    def update(self, mpos):
-        mpos = pg.Vector2(mpos)
-        center = pg.Vector2(self.rect.center)
-        vector = mpos - center
-        #grab data for second angle
-        angle = vector.as_polar()[1]
-        self.image = pg.transform.rotate(self.image_orig, -angle)
-        #keep image in centre
-        self.rect = self.image.get_rect(center=self.rect.center)
-
-        
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
         
 
 
-        
-    
-    
-def main():
-    pg.init()
-    pg.font.init()
-    
-    activetop = False
-    clock = pg.time.Clock()
-    mouse_pos = pg.mouse.get_pos()
-    
-    pole = Vector2(screen_rect.center)
-    #initial zero vector
-    vec = Vector2()
-    
-    #sets polar coordinates
-    vec.from_polar((100, -90))
-    
-    countline = vec[1]
 
-    
-    running = True
-    screen.fill([188, 158, 130])
-
-    pg.draw.rect(screen, (181, 101, 29), rect1)
-    
-    
-    test_object = Object(100, 310, 200, 200, pg.image.load("data/barrelsprite.png"))
-    
-    bt = barreltop(windowcentre)
-    rotation = 0
-    
-    font = pg.font.SysFont('oldenglishtext', 30)
-
-    counter = 10
-    text = font.render(str(counter), True, (0, 128, 0))
-
-    timer_event = pg.USEREVENT+1
-    pg.time.set_timer(timer_event, 1000)
-
-    
+SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 600
 
 
+screen =  pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+clock = pygame.time.Clock()
+player = Player()
+click = Clickable()
+wall = Wall()
 
-    while running:
-    
-        pos = pg.mouse.get_pos()
 
-        
-        
-                        
-                            
-    
-        pg.draw.line(screen, (200, 90, 20), pole, pole+vec, 3)
-        
-        
-            
-        print(rotation)
-
-        fps = 60    
-        for obj in objects:
-            obj.update()
-        
-        for event in pg.event.get():
-            if counter == 0:
-                pg.time.set_timer(timer_event, 0)                
-            if event.type == pg.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if bt.rect.collidepoint(event.pos):
-                        activetop = True
-            if event.type == pg.MOUSEMOTION:
-                if activetop == True:
-                        bt.update(pos)
-                        r, phi = (pos-pole).as_polar()
-                        if phi >= -360:
-                            rotation += 1
-            if event.type == pg.MOUSEBUTTONUP:
-                if event.button == 1:
-                    activetop = False
-            if event.type == pg.QUIT:
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            running = False
+        elif event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                print("ESCAPE")
                 running = False
-            elif event.type == timer_event:
-                counter -= 1
-                text = font.render(str(counter), True, (0, 128, 0))   
-        dt = clock.tick(fps)
-#        print(bt.angle)
-        bt.draw(screen)
-        text_rect = text.get_rect(center = screen.get_rect().center)
-        screen.blit(text, text_rect)
+    screen.fill((255,255,255))
 
+    pressed_keys = pygame.key.get_pressed()
+
+    click.update(pressed_keys)
+
+    if click.rect.collidepoint(pygame.mouse.get_pos()):
+        if pygame.mouse.get_pressed()[0]:
+            print("Click")
+            click.change_color((0,0,255))
+        else:
+            print("Over")
+            click.bigger()
+    else:
+        click.smaller()
         
-        pg.display.flip()
-        
-main()
+    screen.blit(click.surf, click.rect)
+    screen.blit(wall.surf, wall.rect)
 
     
-    
 
 
+    pygame.display.flip()
+    clock.tick(30)
 
-
-
-                
-
-
+pygame.quit()
