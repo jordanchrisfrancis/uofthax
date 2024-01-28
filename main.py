@@ -1,6 +1,7 @@
 # Example file showing a circle moving on screen
 import pygame
 import dilute
+import goofymarwo
 from state import User
 from datetime import datetime, timedelta
 import mixing
