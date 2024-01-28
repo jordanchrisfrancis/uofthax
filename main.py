@@ -1,6 +1,8 @@
 # Example file showing a circle moving on screen
 import pygame
 import dilute
+from state import User
+from datetime import datetime, timedelta
 import mixing
 
 # pygame setup
@@ -11,6 +13,8 @@ running = True
 bg = pygame.image.load("background.jpg")
 pygame.font.init()
 my_font = pygame.font.SysFont('oldenglishtext', 30)
+user = User()
+display = False
 
 icon_1 = pygame.Vector2(335, 130)
 icon_2 = pygame.Vector2(834, 167)
@@ -39,15 +43,7 @@ while running:
             pos = pygame.mouse.get_pos()
 
             if rec1.collidepoint(pos):
-                mixing.mixing(screen, clock)
-            elif rec2.collidepoint(pos):
-                # fermenting
-                print()
-            elif rec3.collidepoint(pos):
                 dilute.dilute(screen, clock)
-            elif rec4.collidepoint(pos):
-                # bottling
-                print()
 
     # flip() the display to put your work on screen
     pygame.display.flip()
@@ -81,5 +77,11 @@ while running:
         screen.blit(text_surface_4, icon_4 + offset)
     else:
         imp4 = pygame.transform.scale(imp, (85, 85))
+
+    if display:
+        error = my_font.render("Alcohol has passed this stage", True, (0,0,0), (255,255,255))
+        err_rect = screen.blit(error, (500, 400))
+        if start_time + timedelta(seconds=3) < datetime.now():
+            display = False
 
 pygame.quit()
