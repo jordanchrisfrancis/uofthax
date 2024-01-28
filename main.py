@@ -54,8 +54,7 @@ while running:
             if rec3.collidepoint(pos):
                 score += dilute.dilute(screen, clock)
             if rec4.collidepoint(pos):
-                # bottle
-                print()
+                score += goofymarwo.hacks(screen, clock)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
