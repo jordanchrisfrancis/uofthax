@@ -1,6 +1,7 @@
 # Example file showing a circle moving on screen
 import pygame
 import dilute
+import goofymarwo
 
 # pygame setup
 pygame.init()
@@ -39,6 +40,9 @@ while running:
 
             if rec1.collidepoint(pos):
                 dilute.dilute(screen, clock)
+            if rec4.collidepoint(pos):
+                score = goofymarwo.hacks(screen,clock)
+                print (score)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
