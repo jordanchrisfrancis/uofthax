@@ -31,6 +31,7 @@ def dilute(screen: pygame.Surface, clock: pygame.time.Clock):
                 pos = pygame.mouse.get_pos()
                 if fin_rect.collidepoint(pos):
                     running = False
+                    return 1 # this would be a score
                     
         pygame.display.flip()
         screen.fill((92,64,51))
