@@ -218,8 +218,8 @@ def mixing(screen, clock):
 
 
     
-        screen.fill((197, 102, 72))
-        pygame.draw.rect(screen, "dark Gray", pygame.Rect(0,400, 800,800))
+        screen.fill((92,64,51))
+        pygame.draw.rect(screen, (30, 0, 0), pygame.Rect(0,400, 800,800))
 
         submit.rect = screen.blit(submit.surf, submit.pos)
         screen.blit(label.surf, label.pos)
