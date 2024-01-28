@@ -5,6 +5,7 @@ import goofymarwo
 from state import User
 from datetime import datetime, timedelta
 import mixing
+import ferment
 
 # pygame setup
 pygame.init()
@@ -33,11 +34,13 @@ text_surface_1 = my_font.render('Stage 1: Combine', False, (0,0,0), (255,255,255
 text_surface_2 = my_font.render('Stage 2: Ferment', False, (0,0,0), (255,255,255))
 text_surface_3 = my_font.render('Stage 3: Dilute', False, (0,0,0), (255,255,255))
 text_surface_4 = my_font.render('Stage 4: Bottle', False, (0,0,0), (255,255,255))
+score_surface = my_font.render('Selling Price of Last Whiskey:' + str(user.final_score), False, (0,0,0), (255, 255, 255))
 
 
 score = 0
 
 while running:
+    score_surface = my_font.render('Selling Price of Last Whiskey:' + str(round(user.final_score * 100, 2)), False, (0,0,0), (255, 255, 255))
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
@@ -47,14 +50,33 @@ while running:
             pos = pygame.mouse.get_pos()
             
             if rec1.collidepoint(pos):
-                score += mixing.mixing(screen, clock)
+                if user.state == 0:
+                    score = mixing.mixing(screen, clock)
+                    user.next_stage(score/25)
+                else:
+                    display = True
+                    start_time = datetime.now()
             if rec2.collidepoint(pos):
-                # ferment
-                print()
+                if user.state == 1:
+                    score = ferment.ferment(screen, clock)
+                    user.next_stage((score - 1)/2)
+                else:
+                    display = True
+                    start_time = datetime.now()
             if rec3.collidepoint(pos):
-                score += dilute.dilute(screen, clock)
+                if user.state == 2:
+                    score = dilute.dilute(screen, clock)
+                    user.next_stage(score)
+                else:
+                    display = True
+                    start_time = datetime.now()
             if rec4.collidepoint(pos):
-                score += goofymarwo.hacks(screen, clock)
+                if user.state == 3:
+                    score = goofymarwo.hacks(screen, clock)
+                    user.next_stage(score)
+                else:
+                    display = True
+                    start_time = datetime.now()
 
     # flip() the display to put your work on screen
     pygame.display.flip()
@@ -68,6 +90,7 @@ while running:
     rec2 = screen.blit(imp2, icon_2)
     rec3 = screen.blit(imp3, icon_3)
     rec4 = screen.blit(imp4, icon_4)
+    screen.blit(score_surface, (0,0))
     if rec1.collidepoint(pygame.mouse.get_pos()):
         imp1 = pygame.transform.scale(imp, (100,100))
         screen.blit(text_surface_1, icon_1 + offset)
@@ -90,7 +113,7 @@ while running:
         imp4 = pygame.transform.scale(imp, (85, 85))
 
     if display:
-        error = my_font.render("Alcohol has passed this stage", True, (0,0,0), (255,255,255))
+        error = my_font.render("Alcohol is not on this stage", True, (0,0,0), (255,255,255))
         err_rect = screen.blit(error, (500*0.67, 400))
         if start_time + timedelta(seconds=3) < datetime.now():
             display = False

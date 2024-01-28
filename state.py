@@ -14,14 +14,18 @@ class User:
             self.compute_score()
             self.scores = [0,0,0,0]
             self.state = 0
-            self.final_score = 0
             self.tier = ' '
         else:
             self.scores[self.state] = score
             self.state +=1
     
     def compute_score(self):
-        pass
+        average = 0
+        for i in range(len(self.scores)):
+            average += self.scores[i]
+        self.final_score = average / len(self.scores)
+        print(self.final_score)
+
     
     def sold(self, money):
         self.money += money
