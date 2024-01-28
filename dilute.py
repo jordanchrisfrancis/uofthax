@@ -1,5 +1,16 @@
 
 import pygame
+import math
+
+
+def rbf(percentage, height):
+    mean_percentage = 40
+    mean_height = 45
+    percentage *= 100
+    distance = (mean_height - height)**2 + (mean_percentage - percentage)**2
+    power = distance/(2*25)
+    return math.exp(-power)
+
 
 def dilute(screen: pygame.Surface, clock: pygame.time.Clock):
     # pygame.init()
@@ -31,7 +42,7 @@ def dilute(screen: pygame.Surface, clock: pygame.time.Clock):
                 pos = pygame.mouse.get_pos()
                 if fin_rect.collidepoint(pos):
                     running = False
-                    return 1 # this would be a score
+                    return rbf(percentage, total_area/590) # this would be a score
                     
         pygame.display.flip()
         screen.fill((92,64,51))
