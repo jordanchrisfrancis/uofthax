@@ -3,6 +3,7 @@ import pygame
 import dilute
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import mixing
 =======
 from state import User
@@ -11,6 +12,12 @@ from datetime import datetime, timedelta
 =======
 import goofymarwo
 >>>>>>> 8b52627 (I carried the team)
+=======
+import goofymarwo
+from state import User
+from datetime import datetime, timedelta
+import mixing
+>>>>>>> ac3db72 (fix?)
 
 # pygame setup
 pygame.init()
