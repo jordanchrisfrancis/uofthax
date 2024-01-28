@@ -1,7 +1,12 @@
 # Example file showing a circle moving on screen
 import pygame
 import dilute
+<<<<<<< HEAD
 import mixing
+=======
+from state import User
+from datetime import datetime, timedelta
+>>>>>>> 8fe7aa4 (States)
 
 # pygame setup
 pygame.init()
@@ -20,6 +25,8 @@ running = True
 bg = pygame.image.load("background.jpg")
 pygame.font.init()
 my_font = pygame.font.SysFont('oldenglishtext', 30)
+user = User()
+display = False
 
 icon_1 = pygame.Vector2(335, 130)
 icon_2 = pygame.Vector2(834, 167)
@@ -53,6 +60,7 @@ while running:
             pos = pygame.mouse.get_pos()
 
             if rec1.collidepoint(pos):
+<<<<<<< HEAD
                 mixing.mixing(screen, clock)
             elif rec2.collidepoint(pos):
                 # fermenting
@@ -62,6 +70,18 @@ while running:
             elif rec4.collidepoint(pos):
                 # bottling
                 print()
+=======
+
+                ### This is kinda weird but basically this checks if the alcohol is at this stage or not
+                ### if it is, then normal
+                ### if not then no action available really...
+                if user.state == 0:
+                    score = dilute.dilute(screen, clock)
+                    user.next_stage(score)
+                else:
+                    display = True
+                    start_time = datetime.now()
+>>>>>>> 8fe7aa4 (States)
 
 <<<<<<< HEAD
     # fill the screen with a color to wipe away anything from last frame
@@ -117,5 +137,11 @@ while running:
     else:
         imp4 = pygame.transform.scale(imp, (85, 85))
 >>>>>>> aa6e90d (main-menu)
+
+    if display:
+        error = my_font.render("Alcohol has passed this stage", True, (0,0,0), (255,255,255))
+        err_rect = screen.blit(error, (500, 400))
+        if start_time + timedelta(seconds=3) < datetime.now():
+            display = False
 
 pygame.quit()
