@@ -41,12 +41,12 @@ while running:
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
 
-            if rec1.collidepoint(pos):
+            if rec3.collidepoint(pos):
 
                 ### This is kinda weird but basically this checks if the alcohol is at this stage or not
                 ### if it is, then normal
                 ### if not then no action available really...
-                if user.state == 0:
+                if user.state == 2:
                     score = dilute.dilute(screen, clock)
                     user.next_stage(score)
                 else:
