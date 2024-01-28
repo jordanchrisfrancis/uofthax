@@ -13,24 +13,28 @@ except ImportError:
     sys.exit(2)
     
 #initialize screen and global objects
+BLACK = (0, 0, 0)
 windowsize = Vector2(800, 600)
 windowcentre = windowsize // 2
+
+pg.font.init()
+my_font = pg.font.SysFont('oldenglishtext', 30)
 
 screen = pg.display.set_mode((windowsize))
 screen_rect = screen.get_rect()
 
 reference_dict = {}
-
-
 objects = []
-
 
 rect1 = pg.Rect(0, 500, 800, 100)
     
 
-def draw_text(text, font, text_col, x, y):
-    img = font.render(text, True, text_col)
-    screen.blit(img, (x, y))    
+class Label(pg.sprite.Sprite):
+    def __init__(self, text, pos):
+        self.text = text
+        self.surf = my_font.render(text, True, (0,0,0), (255,255,255))
+        self.rect = self.surf.get_rect()
+        self.pos = pos
 
 
 def rotate_on_pivot(image, angle, pivot, origin):
@@ -100,6 +104,20 @@ class barreltop(pg.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, self.rect)
         
+def score(rotation):
+    score = 0
+    for rotation in rotation:
+        if 1000 > rotation > 380:
+            score += 3
+        elif 250 > rotation > 100:
+            score += 2
+        elif rotation > 90:
+            score += 1
+    if score > 25:
+        return 25
+    else:
+        return score
+        
 
 
         
@@ -133,20 +151,17 @@ def main():
     
     bt = barreltop(windowcentre)
     rotation = 0
+    frame_rate = 60 
+    frame_count = 0
+    start_time = 90
     
-    font = pg.font.SysFont('oldenglishtext', 30)
-
-
-    
-
-
+    label = Label("You have 250 rotations, spin the barrel top to close and ferment the whiskey!", (50, 100))
+    label2 = Label("time is up! score tallied", (100, 150))    
 
     while running:
     
         pos = pg.mouse.get_pos()
 
-        
-        draw_text(f'Score: ')
         pg.time.set_timer(CUSTOMTIMER, 25000)
 
         pg.draw.line(screen, (200, 90, 20), pole, pole+vec, 3)
@@ -155,7 +170,7 @@ def main():
             
         print(rotation)
 
-        fps = 60    
+           
         for obj in objects:
             obj.update()
         
@@ -174,17 +189,18 @@ def main():
                 if event.button == 1:
                     activetop = False
             if event.type == CUSTOMTIMER:
-                draw_text()
+                screen.blit(label2.surf, label2.pos) 
+                
                 
             if event.type == pg.QUIT:
                 running = False
 
             
+        screen.blit(label.surf, label.pos)   
 
-        dt = clock.tick(fps)
+        dt = clock.tick(frame_rate) 
 #        print(bt.angle)
         bt.draw(screen)
-        
         pg.display.flip()
         
 main()
