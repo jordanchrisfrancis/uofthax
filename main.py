@@ -2,11 +2,15 @@
 import pygame
 import dilute
 <<<<<<< HEAD
+<<<<<<< HEAD
 import mixing
 =======
 from state import User
 from datetime import datetime, timedelta
 >>>>>>> 8fe7aa4 (States)
+=======
+import goofymarwo
+>>>>>>> 8b52627 (I carried the team)
 
 # pygame setup
 pygame.init()
@@ -79,6 +83,7 @@ while running:
                 print()
             elif rec3.collidepoint(pos):
                 dilute.dilute(screen, clock)
+<<<<<<< HEAD
             elif rec4.collidepoint(pos):
                 # bottling
                 print()
@@ -99,6 +104,11 @@ while running:
                 # bottle
                 print()
 >>>>>>> f005400 (combined dilute and main)
+=======
+            if rec4.collidepoint(pos):
+                score = goofymarwo.hacks(screen,clock)
+                print (score)
+>>>>>>> 8b52627 (I carried the team)
 
                 ### This is kinda weird but basically this checks if the alcohol is at this stage or not
                 ### if it is, then normal
