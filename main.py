@@ -1,7 +1,13 @@
 # Example file showing a circle moving on screen
 import pygame
 import dilute
+<<<<<<< HEAD
 import goofymarwo
+=======
+from state import User
+from datetime import datetime, timedelta
+import mixing
+>>>>>>> d4e31b6dd3d13bc157537ab1c3396fbbda160f22
 
 # pygame setup
 pygame.init()
@@ -11,6 +17,8 @@ running = True
 bg = pygame.image.load("background.jpg")
 pygame.font.init()
 my_font = pygame.font.SysFont('oldenglishtext', 30)
+user = User()
+display = False
 
 icon_1 = pygame.Vector2(335, 130)
 icon_2 = pygame.Vector2(834, 167)
@@ -76,5 +84,11 @@ while running:
         screen.blit(text_surface_4, icon_4 + offset)
     else:
         imp4 = pygame.transform.scale(imp, (85, 85))
+
+    if display:
+        error = my_font.render("Alcohol has passed this stage", True, (0,0,0), (255,255,255))
+        err_rect = screen.blit(error, (500, 400))
+        if start_time + timedelta(seconds=3) < datetime.now():
+            display = False
 
 pygame.quit()
