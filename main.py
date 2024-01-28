@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 # pygame setup
 pygame.init()
 <<<<<<< HEAD
+<<<<<<< HEAD
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 #
@@ -20,20 +21,23 @@ dt = 0
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 =======
 screen = pygame.display.set_mode((1193, 498))
+=======
+screen = pygame.display.set_mode((800, 600))
+>>>>>>> f005400 (combined dilute and main)
 clock = pygame.time.Clock()
 running = True
-bg = pygame.image.load("background.jpg")
+bg = pygame.transform.scale(pygame.image.load("background.jpg"), (800,600))
 pygame.font.init()
 my_font = pygame.font.SysFont('oldenglishtext', 30)
 user = User()
 display = False
 
-icon_1 = pygame.Vector2(335, 130)
-icon_2 = pygame.Vector2(834, 167)
-icon_3 = pygame.Vector2(465, 62)
-icon_4 = pygame.Vector2(728, 95)
+icon_1 = pygame.Vector2(335 *0.67, 130 * 1.2 +40)
+icon_2 = pygame.Vector2(834*0.67, 167* 1.2 + 40)
+icon_3 = pygame.Vector2(465*0.67, 62* 1.2 + 40)
+icon_4 = pygame.Vector2(728*0.67, 95* 1.2 + 40)
 
-offset = pygame.Vector2(-55, 110)
+offset = pygame.Vector2(-55*0.67, 110* 1.2)
 # create a surface object, image is drawn on it.
 imp = pygame.image.load("pin.png")
 imp1 = pygame.transform.scale(imp, (85, 85))
@@ -46,10 +50,16 @@ text_surface_3 = my_font.render('Stage 3: Dilute', False, (0,0,0), (255,255,255)
 text_surface_4 = my_font.render('Stage 4: Bottle', False, (0,0,0), (255,255,255))
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> aa6e90d (main-menu)
 
 =======
 >>>>>>> c984c89 (Added Dilution)
+=======
+
+score = 0
+
+>>>>>>> f005400 (combined dilute and main)
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -58,6 +68,7 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
+<<<<<<< HEAD
 
 <<<<<<< HEAD
             if rec1.collidepoint(pos):
@@ -75,6 +86,19 @@ while running:
 =======
             if rec3.collidepoint(pos):
 >>>>>>> 3a12e8f (move dilute to state 3)
+=======
+            
+            if rec1.collidepoint(pos):
+                score += mixing.mixing(screen, clock)
+            if rec2.collidepoint(pos):
+                # ferment
+                print()
+            if rec3.collidepoint(pos):
+                score += dilute.dilute(screen, clock)
+            if rec4.collidepoint(pos):
+                # bottle
+                print()
+>>>>>>> f005400 (combined dilute and main)
 
                 ### This is kinda weird but basically this checks if the alcohol is at this stage or not
                 ### if it is, then normal
@@ -144,7 +168,7 @@ while running:
 
     if display:
         error = my_font.render("Alcohol has passed this stage", True, (0,0,0), (255,255,255))
-        err_rect = screen.blit(error, (500, 400))
+        err_rect = screen.blit(error, (500*0.67, 400))
         if start_time + timedelta(seconds=3) < datetime.now():
             display = False
 

@@ -46,31 +46,31 @@ def dilute(screen: pygame.Surface, clock: pygame.time.Clock):
                     
         pygame.display.flip()
         screen.fill((92,64,51))
-        pygame.draw.rect(screen, (30, 0, 0), pygame.Rect(0, 400, 1193, 100))
-        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(220, 420, 630, 20))
-        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(220, 350, 20, 90))
-        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(830, 350, 20, 90))
-        pygame.draw.rect(screen, (255,0,0), pygame.Rect(220,375,20, 5))
-        pygame.draw.rect(screen, (255,0,0), pygame.Rect(830,375,20, 5))
+        pygame.draw.rect(screen, (30, 0, 0), pygame.Rect(0*0.67, 400* 1.2, 1193*0.67, 100* 1.2))
+        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(220*0.67 + 50, 420* 1.2, 630*0.67, 20* 1.2))
+        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(220*0.67 + 50, 350* 1.2, 20*0.67, 90* 1.2))
+        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(830*0.67 + 50, 350* 1.2, 20*0.67, 90* 1.2))
+        pygame.draw.rect(screen, (255,0,0), pygame.Rect(220*0.67  + 50,375* 1.2,20*0.67, 5* 1.2))
+        pygame.draw.rect(screen, (255,0,0), pygame.Rect(830*0.67 + 50,375* 1.2,20*0.67, 5* 1.2))
         # pygame.draw.rect(screen, (0,255,0), (240, 385, 590, 35))
 
         dt = clock.tick(60) / 1000
-        tap_rect = screen.blit(tap1, (200,250))
-        barrel_rect = screen.blit(barrel, (0,200))
-        water_rect = screen.blit(water_tank, (700, 0))
-        tap2_rect = screen.blit(tap2, (790, 250))
+        tap_rect = screen.blit(tap1, (200*0.67 + 50,250* 1.2))
+        barrel_rect = screen.blit(barrel, (0*0.67, 200* 1.2))
+        tap2_rect = screen.blit(tap2, (790*0.67 + 50, 250* 1.2))
+        water_rect = screen.blit(water_tank, (700*0.67, 0* 1.2 + 50))
         finish = my_font.render("Submit", True, (0,0,0), (255,255,255))
-        fin_rect = screen.blit(finish, (500, 100))
+        fin_rect = screen.blit(finish, (500*0.67, 100* 1.2))
 
         mouse = pygame.mouse.get_pressed()
         if mouse[0] == True and allow:
             pos = pygame.mouse.get_pos()
             if tap_rect.collidepoint(pos):
-                screen.blit(orange_drop, (265,340))
+                screen.blit(orange_drop, (265*0.67 + 70,340* 1.2 - 25))
                 total_area += rate*dt
                 alcohol_area += rate*dt
             if tap2_rect.collidepoint(pos):
-                screen.blit(blue_drop, (790, 340))
+                screen.blit(blue_drop, (790*0.67 + 50, 340* 1.2 - 25))
                 total_area += rate*dt
                 water_area += rate*dt
         percentage = 0.6*alcohol_area/total_area if alcohol_area != 0 else 0
@@ -89,5 +89,5 @@ def dilute(screen: pygame.Surface, clock: pygame.time.Clock):
         if 420-total_area/590 <= 350:
             allow = False
             fail = my_font.render("That's More Than Enough Buddy!", True, (0,0,0), (255, 255, 255))
-            screen.blit(fail, (300,200))
-        pygame.draw.rect(screen, (red,115,blue), (240, 420-total_area/590, 590, total_area/590))
+            screen.blit(fail, (300 * 0.67,200* 1.2))
+        pygame.draw.rect(screen, (red,115,blue), (240*0.67 + 50, (420-total_area/590) * 1.2, 590*0.67, (total_area/590) * 1.2))
